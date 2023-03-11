@@ -1,0 +1,7 @@
+{
+  "name": "PokeTypeChart",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
