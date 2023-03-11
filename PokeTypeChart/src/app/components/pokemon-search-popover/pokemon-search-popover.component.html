@@ -1,3 +1,9 @@
-<p>
-  pokemon-search-popover works!
-</p>
+<ion-list>
+  <ion-item *ngFor="let pokemon of filteredSearch" (click)="outputSelectedPokemon(pokemon)">
+    <ion-thumbnail id="toolbar-avatar"
+      ><img class="img-header" src="{{ pokemon?.sprites?.frontDefault }}" alt=""
+    /></ion-thumbnail>
+
+    {{ pokemon?.name }}
+  </ion-item>
+</ion-list>
