@@ -1,9 +1,197 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>type-chart</ion-title>
+    <ion-title>Type Chart | {{actualGen}}</ion-title>
+    <ion-button id="popover-button" slot="primary" fill="outline" class="version-button"
+      >Gen</ion-button
+    >
+    <ion-popover id="genPopover" trigger="popover-button" [dismissOnSelect]="true">
+      <ng-template>
+        <ion-content>
+          <ion-list>
+            <ion-button
+              expand="block"
+              class="version-button"
+              *ngFor="let actualGen of availableGens"
+              (click)="updateToNewGeneration(actualGen[0])"
+              [fill]="generation === actualGen[0] ? 'outline' : 'clear'"
+              >{{actualGen[1]}}</ion-button
+            >
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
   </ion-toolbar>
+  <!-- <ion-toolbar>
+    <ion-searchbar
+      [formControl]="searchControl"
+      #searchBar
+      showCancelButton="focus"
+    ></ion-searchbar>
+    <ion-button id="selector" shape="round" color="medium" (click)="getData()"></ion-button>
+  </ion-toolbar> -->
 </ion-header>
 
 <ion-content>
+  <!-- <ion-popover id="searchPopover" #popover [isOpen]="isPopoverOpen">
+    <ng-template>
+      <app-pokemon-search-popover
+        [filteredSearch]="filteredSearch"
+        (selectedPokemon)="importPokemonTypeFromPopover($event)"
+      ></app-pokemon-search-popover>
+    </ng-template>
+  </ion-popover> -->
+  <ion-card>
+    <div class="type-chart-container">
+      <div
+        (click)="toggleActiveType(type.name)"
+        *ngFor="let type of types"
+        class="type-img-{{type.name}} type-chart-img"
+        [ngStyle]="{'border': type.name === type1 || type.name === type2 ? '3px solid white' :''}"
+      ></div>
+    </div>
+  </ion-card>
 
+  <ion-card>
+    <div class="selected-type-chart">
+      <div class="selected-type-container">
+        <div class="unselected-type" *ngIf="!type1">Type 1</div>
+        <div class="type-img-{{type1}} selected-type" *ngIf="type1"></div>
+      </div>
+      <div class="selected-type-container">
+        <div class="unselected-type" *ngIf="!type2">Type 2</div>
+        <div class="type-img-{{type2}} selected-type" *ngIf="type2"></div>
+      </div>
+    </div>
+  </ion-card>
+
+  <ion-card *ngIf="type1 || type2">
+    <ion-card-content>
+      <ion-card-title
+        class="flex-items-center"
+        *ngIf="noDmgFrom.length > 0 || oneQuarterDamageFrom.length > 0 || halfDmgFrom.length > 0"
+        ><div class="icon-container">
+          <ion-icon class="repaired-icon icon-padding-right" src="./assets/shield.svg"></ion-icon>
+        </div>
+        Resistances
+      </ion-card-title>
+      <ion-grid>
+        <ion-row *ngIf="noDmgFrom.length > 0" class="flex-items-center">
+          <ion-col size="2" class="flex-content-center">
+            <ion-badge class="multiplier-badge" id="resistance-zero">x0</ion-badge>
+          </ion-col>
+          <ion-col class="col-flex-types">
+            <div *ngFor="let item of noDmgFrom" class="type-img-{{item}} type-card-res-img"></div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="oneQuarterDamageFrom.length > 0" class="flex-items-center">
+          <ion-col size="2" class="flex-content-center">
+            <ion-badge class="multiplier-badge" id="resistance-one-quarter">x&#188;</ion-badge>
+          </ion-col>
+          <ion-col class="col-flex-types">
+            <div
+              *ngFor="let item of oneQuarterDamageFrom"
+              class="type-img-{{item}} type-card-res-img"
+            ></div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="halfDmgFrom.length > 0" class="flex-items-center">
+          <ion-col size="2" class="flex-content-center">
+            <ion-badge class="multiplier-badge" id="resistance-half">x&#189;</ion-badge>
+          </ion-col>
+          <ion-col class="col-flex-types">
+            <div *ngFor="let item of halfDmgFrom" class="type-img-{{item}} type-card-res-img"></div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-card-title
+        class="flex-items-center"
+        *ngIf="doubleDmgFrom.length > 0 || quadrupleDamageFrom.length > 0"
+        ><div class="icon-container">
+          <ion-icon
+            class="broken-icon icon-padding-right"
+            src="./assets/broken-shield.svg"
+          ></ion-icon>
+        </div>
+        Weaknesses
+      </ion-card-title>
+      <ion-grid>
+        <ion-row *ngIf="doubleDmgFrom.length > 0" class="flex-items-center">
+          <ion-col size="2" class="flex-content-center">
+            <ion-badge class="multiplier-badge" id="weakness-double">x2</ion-badge>
+          </ion-col>
+          <ion-col class="col-flex-types">
+            <div
+              *ngFor="let item of doubleDmgFrom"
+              class="type-img-{{item}} type-card-res-img"
+            ></div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="quadrupleDamageFrom.length > 0" class="flex-items-center">
+          <ion-col size="2" class="flex-content-center">
+            <ion-badge class="multiplier-badge" id="weakness-quadruple">x4</ion-badge>
+          </ion-col>
+          <ion-col class="col-flex-types">
+            <div
+              *ngFor="let item of quadrupleDamageFrom"
+              class="type-img-{{item}} type-card-res-img"
+            ></div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="type1 || type2">
+    <ion-card-content>
+      <ion-card-title class="flex-items-center" *ngIf="doubleDmgTo.length > 0"
+        ><div class="icon-container">
+          <ion-icon class="repaired-icon icon-padding-right" src="./assets/sword.svg"></ion-icon>
+        </div>
+        Super Effective!
+      </ion-card-title>
+      <ion-grid>
+        <ion-row *ngIf="doubleDmgTo.length > 0" class="flex-items-center">
+          <ion-col size="2" class="flex-content-center">
+            <ion-badge class="multiplier-badge" id="weakness-double">x2</ion-badge>
+          </ion-col>
+          <ion-col class="col-flex-types">
+            <div *ngFor="let item of doubleDmgTo" class="type-img-{{item}} type-card-res-img"></div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-card-title class="flex-items-center" *ngIf="noDmgTo.length > 0 || halfDmgTo.length > 0"
+        ><div class="icon-container">
+          <ion-icon
+            class="broken-icon icon-padding-right"
+            src="./assets/broken-sword.svg"
+          ></ion-icon>
+        </div>
+        Not very effective...
+      </ion-card-title>
+      <ion-grid>
+        <ion-row *ngIf="noDmgTo.length > 0" class="flex-items-center">
+          <ion-col size="2" class="flex-content-center">
+            <ion-badge class="multiplier-badge" id="resistance-zero">x0</ion-badge>
+          </ion-col>
+          <ion-col class="col-flex-types">
+            <div *ngFor="let item of noDmgTo" class="type-img-{{item}} type-card-res-img"></div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="halfDmgTo.length > 0" class="flex-items-center">
+          <ion-col size="2" class="flex-content-center">
+            <ion-badge class="multiplier-badge" id="resistance-half">x&#189;</ion-badge>
+          </ion-col>
+          <ion-col class="col-flex-types">
+            <div *ngFor="let item of halfDmgTo" class="type-img-{{item}} type-card-res-img"></div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
