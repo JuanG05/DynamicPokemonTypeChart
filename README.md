@@ -9,6 +9,8 @@ The 3 versions of type charts are included:
 - Gen 2-5
 - Gen6+
 
+This app is an extract from another unfinished side project of mine.
+
 # v1.0
 - Dynamic Types
 - Different generations
