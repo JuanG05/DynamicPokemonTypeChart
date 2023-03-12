@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Type Chart | {{actualGen}}</ion-title>
+    <ion-title size="small">Type Chart | {{actualGen}}</ion-title>
+    <ion-button class="version-button" slot="primary" fill="clear" (click)="openAboutModal()">
+      <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
+    </ion-button>
     <ion-button id="popover-button" slot="primary" fill="outline" class="version-button"
       >Gen</ion-button
     >
@@ -45,7 +48,7 @@
       <div
         (click)="toggleActiveType(type.name)"
         *ngFor="let type of types"
-        class="type-img-{{type.name}} type-chart-img"
+        class="type-img-{{type.name}} type-chart-img type-img-max-size"
         [ngStyle]="{'border': type.name === type1 || type.name === type2 ? '3px solid white' :''}"
       ></div>
     </div>
@@ -54,12 +57,12 @@
   <ion-card>
     <div class="selected-type-chart">
       <div class="selected-type-container">
-        <div class="unselected-type" *ngIf="!type1">Type 1</div>
-        <div class="type-img-{{type1}} selected-type" *ngIf="type1"></div>
+        <div class="unselected-type type-preview" *ngIf="!type1">Type 1</div>
+        <div class="type-img-{{type1}} selected-type type-preview" *ngIf="type1"></div>
       </div>
       <div class="selected-type-container">
-        <div class="unselected-type" *ngIf="!type2">Type 2</div>
-        <div class="type-img-{{type2}} selected-type" *ngIf="type2"></div>
+        <div class="unselected-type type-preview" *ngIf="!type2">Type 2</div>
+        <div class="type-img-{{type2}} selected-type type-preview" *ngIf="type2"></div>
       </div>
     </div>
   </ion-card>

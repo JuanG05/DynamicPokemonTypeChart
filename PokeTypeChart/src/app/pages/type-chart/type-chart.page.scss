@@ -7,24 +7,29 @@
   color: white;
   display: flex;
   width: 100%;
-  justify-content: center;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .unselected-type {
-  font-size: 2vh;
+  font-size: 130%;
   text-align: center;
-  padding-top: 0.5%;
-  height: 3vh;
-  width: 70%;
-  margin: 3% 0% 3% 0%;
   border: 1px solid white;
   border-radius: 5px;
 }
 
 .selected-type {
   background-position: center;
-  height: 3vh;
+}
+
+.type-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 85%;
   width: 70%;
+  max-width: 320px;
+  min-height: 25px;
   margin: 3% 0% 3% 0%;
 }
 
@@ -37,9 +42,23 @@
 
 .type-chart-img {
   background-position: center;
-  height: 2.6vh;
-  width: 29%;
-  margin: 2% 2% 2% 2%;
+  height: 30px;
+  width: 8%;
+  min-height: 20px;
+  min-width: 115px;
+  margin: 1.5% 1.5% 1.5% 1.5%;
+}
+
+.type-card-res-img {
+  min-width: 85px;
+  min-height: 18px;
+  margin: 0 1% 1% 0;
+  background-position: center;
+}
+
+.type-img-max-size {
+  max-height: 25px;
+  max-width: 240px;
 }
 
 .version-button {
@@ -61,4 +80,8 @@
 app-pokemon-search-popover {
   height: 100%;
   width: 100%;
+}
+
+ion-title.title-small {
+  font-size: 18px;
 }

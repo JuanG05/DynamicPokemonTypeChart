@@ -1,9 +1,10 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {TypesDamage} from 'src/app/helpers/TypesDamage';
-import {IonPopover} from '@ionic/angular';
+import {IonPopover, ModalController} from '@ionic/angular';
 import {Type} from 'src/app/models/Type';
 import {Pokemon} from 'src/app/models/Pokemon';
 import {PokemonService} from 'src/app/services/pokemon.service';
+import {AboutComponent} from 'src/app/components/about/about.component';
 import {FormControl} from '@angular/forms';
 import {debounceTime} from 'rxjs/operators';
 
@@ -46,7 +47,7 @@ export class TypeChartPage implements OnInit, AfterViewInit {
   ];
   actualGen: string = '';
 
-  constructor(private pokemonService: PokemonService) {
+  constructor(private pokemonService: PokemonService, private modalController: ModalController) {
     // this.searchControl = new FormControl();
   }
 
@@ -178,6 +179,15 @@ export class TypeChartPage implements OnInit, AfterViewInit {
         this.actualGen = 'Gen ?';
         break;
     }
+  }
+
+  async openAboutModal() {
+    const modal = await this.modalController.create({
+      component: AboutComponent,
+      swipeToClose: true,
+      presentingElement: await this.modalController.getTop()
+    });
+    return await modal.present();
   }
 
   // filterPokemon(searchTerm: string) {
