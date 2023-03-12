@@ -40,18 +40,17 @@ export class TypeChartPage implements OnInit, AfterViewInit {
   type2: string = '';
 
   generation: string = '9';
+  actualGen: string = '';
   availableGens: string[][] = [
     ['1', 'Gen 1'],
     ['4', 'Gen 2-4'],
     ['5', 'Gen 5'],
     ['9', 'Gen 6+']
   ];
-  actualGen: string = '';
 
   constructor(private pokemonService: PokemonService, private modalController: ModalController) {
     this.searchControl = new FormControl();
     this.pokemonService.getPokemonInfoInArray();
-    // this.pokemonService.getPokemonInfoInArrayFromRange(1009, 1009);
   }
 
   ngOnInit() {
@@ -237,22 +236,4 @@ export class TypeChartPage implements OnInit, AfterViewInit {
       this.type2 = pokemon.types[1] ? pokemon.types[1].type.name : '';
     }
   }
-
-  // getData() {
-  //   const array = [
-  //     this.pokemonService.pokemonInfo
-  //     // this.pokemonService.pokemonSpeciesInfo,
-  //     // this.pokemonService.typesInfo
-  //   ];
-  //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
-  //   for (let i = 0; i < array.length; i++) {
-  //     const theJSON = JSON.stringify(array[i]);
-  //     const uri = 'data:application/json;charset=UTF-8,' + encodeURIComponent(theJSON);
-  //     const a = document.createElement('a');
-  //     a.href = uri;
-  //     a.innerHTML = `Right-click and choose save as...`;
-  //     document.getElementById('selector')?.appendChild(a);
-  //     document.getElementById('selector')?.appendChild(document.createElement('br'));
-  //   }
-  // }
 }

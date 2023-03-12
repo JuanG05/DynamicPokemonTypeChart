@@ -29,7 +29,6 @@
       #searchBar
       showCancelButton="focus"
     ></ion-searchbar>
-    <!-- <ion-button id="selector" shape="round" color="medium" (click)="getData()"></ion-button> -->
   </ion-toolbar>
 </ion-header>
 
@@ -48,7 +47,7 @@
         (click)="toggleActiveType(type.name)"
         *ngFor="let type of types"
         class="type-img-{{type.name}} type-chart-img type-img-max-size"
-        [ngStyle]="{'border': type.name === type1 || type.name === type2 ? '3px solid white' :''}"
+        [ngStyle]="{'border': type.name === type1 || type.name === type2 ? '3px solid white' :'3px solid #000000'}"
       ></div>
     </div>
   </ion-card>

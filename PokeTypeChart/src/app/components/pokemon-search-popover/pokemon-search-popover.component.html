@@ -1,9 +1,11 @@
 <ion-list>
   <ion-item *ngFor="let pokemon of filteredSearch" (click)="outputSelectedPokemon(pokemon)">
     <ion-thumbnail id="toolbar-avatar"
-      ><img class="img-header" src="{{ pokemon?.sprite }}" alt=""
+      ><img
+        class="img-header"
+        [src]="pokemon?.sprite ? pokemon.sprite : '../../../assets/pokeball.png'"
+        alt="pokemon"
     /></ion-thumbnail>
-
     {{ pokemon?.name }}
   </ion-item>
 </ion-list>

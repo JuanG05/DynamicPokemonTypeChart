@@ -1,8 +1,14 @@
 .flex {
   display: flex;
+  justify-content: center;
+}
+
+.text-capitalized {
+  text-transform: capitalize;
 }
 
 ion-icon {
+  margin: 0;
   vertical-align: middle;
   color: white;
 }

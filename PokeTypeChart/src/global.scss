@@ -115,6 +115,10 @@ $typeColors: ('bug', $type-img-bug), ('dark', $type-img-dark), ('dragon', $type-
   justify-content: center;
 }
 
+.img-header {
+  image-rendering: pixelated;
+}
+
 * {
   --ion-background-color: #000000;
   --ion-card-background: #1d1d1d;
