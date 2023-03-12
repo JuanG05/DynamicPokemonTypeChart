@@ -23,25 +23,25 @@
       </ng-template>
     </ion-popover>
   </ion-toolbar>
-  <!-- <ion-toolbar>
+  <ion-toolbar>
     <ion-searchbar
       [formControl]="searchControl"
       #searchBar
       showCancelButton="focus"
     ></ion-searchbar>
-    <ion-button id="selector" shape="round" color="medium" (click)="getData()"></ion-button>
-  </ion-toolbar> -->
+    <!-- <ion-button id="selector" shape="round" color="medium" (click)="getData()"></ion-button> -->
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- <ion-popover id="searchPopover" #popover [isOpen]="isPopoverOpen">
+  <ion-popover id="searchPopover" #popover [isOpen]="isPopoverOpen">
     <ng-template>
       <app-pokemon-search-popover
         [filteredSearch]="filteredSearch"
         (selectedPokemon)="importPokemonTypeFromPopover($event)"
       ></app-pokemon-search-popover>
     </ng-template>
-  </ion-popover> -->
+  </ion-popover>
   <ion-card>
     <div class="type-chart-container">
       <div

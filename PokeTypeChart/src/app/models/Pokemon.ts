@@ -2,13 +2,13 @@ export interface Pokemon {
   id: number;
   name: string;
   generation: number;
-  sprites: {frontDefault: string};
+  sprite: string;
   pastTypes: PastType[];
   types: PokemonType[];
 }
 
 export interface PastType {
-  generation: {name: string; id: number};
+  generation: number;
   types: PokemonType[];
 }
 

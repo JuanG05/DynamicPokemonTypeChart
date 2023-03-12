@@ -14,9 +14,9 @@ import {debounceTime} from 'rxjs/operators';
   styleUrls: ['./type-chart.page.scss']
 })
 export class TypeChartPage implements OnInit, AfterViewInit {
-  @ViewChild('popover') popover: IonPopover | undefined;
+  @ViewChild('popover') popover!: IonPopover;
 
-  // searchControl: FormControl;
+  searchControl: FormControl;
 
   pokemonTypeDamages: string[][] = [];
   pokemonTypeDamagesTo: string[][] = [];
@@ -39,38 +39,42 @@ export class TypeChartPage implements OnInit, AfterViewInit {
   type1: string = '';
   type2: string = '';
 
-  generation: string = '1';
+  generation: string = '9';
   availableGens: string[][] = [
     ['1', 'Gen 1'],
-    ['5', 'Gen 2-5'],
-    ['6', 'Gen 6+']
+    ['4', 'Gen 2-4'],
+    ['5', 'Gen 5'],
+    ['9', 'Gen 6+']
   ];
   actualGen: string = '';
 
   constructor(private pokemonService: PokemonService, private modalController: ModalController) {
-    // this.searchControl = new FormControl();
+    this.searchControl = new FormControl();
+    this.pokemonService.getPokemonInfoInArray();
+    // this.pokemonService.getPokemonInfoInArrayFromRange(1009, 1009);
   }
 
   ngOnInit() {
-    // this.searchControl.valueChanges.pipe(debounceTime(700)).subscribe((search) => {
-    //   this.filterPokemon(search);
-    // });
+    this.searchControl.valueChanges.pipe(debounceTime(700)).subscribe((search) => {
+      this.filterPokemon(search);
+    });
     this.type1 = '';
     this.type2 = '';
-    this.updateToNewGeneration('6');
+    this.updateToNewGeneration(this.generation);
   }
 
   ngAfterViewInit(): void {
-    // this.popover.didDismiss.subscribe(() => {
-    //   this.isPopoverOpen = false;
-    //   this.searchControl.reset();
-    // });
+    this.popover.didDismiss.subscribe(() => {
+      this.isPopoverOpen = false;
+      this.searchControl.reset();
+    });
   }
 
   updateToNewGeneration(newGeneration?: string) {
     if (newGeneration) {
       this.setNewGenTitleText(newGeneration);
       this.generation = newGeneration;
+      this.searchControl.reset();
     }
 
     this.pokemonService.getAllTypesInfoInArray().then((response: any) => {
@@ -168,11 +172,14 @@ export class TypeChartPage implements OnInit, AfterViewInit {
       case '1':
         this.actualGen = this.availableGens[0][1];
         break;
-      case '5':
+      case '4':
         this.actualGen = this.availableGens[1][1];
         break;
-      case '6':
+      case '5':
         this.actualGen = this.availableGens[2][1];
+        break;
+      case '9':
+        this.actualGen = this.availableGens[3][1];
         break;
 
       default:
@@ -190,65 +197,62 @@ export class TypeChartPage implements OnInit, AfterViewInit {
     return await modal.present();
   }
 
-  // filterPokemon(searchTerm: string) {
-  //   if (!searchTerm) {
-  //     this.isPopoverOpen = false;
-  //   } else {
-  //     this.pokemonService.searchPokemon(searchTerm).then((response: string | any[]) => {
-  //       const filteredList: any[] = [];
-  //       for (const pokemon of response) {
-  //         this.pokemonService.getPokemonByName(pokemon.name).then((pokemonInfo: any) => {
-  //           TypedData.setPokemonData(pokemonInfo).then((pokemonData: any) => {
-  //             filteredList.push(pokemonData);
-  //             filteredList.sort((a, b) => a.id - b.id);
-  //           });
-  //         });
-  //       }
-  //       this.filteredSearch = filteredList;
-  //       this.filteredSearch.sort((a, b) => a.id - b.id);
+  filterPokemon(searchTerm: string) {
+    if (!searchTerm) {
+      this.isPopoverOpen = false;
+    } else {
+      this.pokemonService
+        .searchPokemon(searchTerm, this.generation)
+        .then((response: string | any[]) => {
+          const filteredList: any[] = [];
+          for (const pokemon of response) {
+            filteredList.push(pokemon);
+            filteredList.sort((a, b) => a.id - b.id);
+          }
+          this.filteredSearch = filteredList;
 
-  //       if (response.length > 0) {
-  //         this.isPopoverOpen = true;
-  //       }
-  //     });
-  //   }
-  // }
-
-  // importPokemonTypeFromPopover(pokemon: Pokemon) {
-  //   this.popover.dismiss();
-
-  //   this.fillPokemonTypes(pokemon);
-  //   this.getPokemonTypeDamages();
-  // }
-
-  // fillPokemonTypes(pokemon: Pokemon) {
-  //   if (
-  //     pokemon.pastTypes.length > 0 &&
-  //     pokemon.pastTypes[0].generation.id >= parseInt(this.generation, 10)
-  //   ) {
-  //     this.type1 = pokemon.pastTypes[0].types[0] ? pokemon.pastTypes[0].types[0].type.name : '';
-  //     this.type2 = pokemon.pastTypes[0].types[1] ? pokemon.pastTypes[0].types[1].type.name : '';
-  //   } else {
-  //     this.type1 = pokemon.types[0] ? pokemon.types[0].type.name : '';
-  //     this.type2 = pokemon.types[1] ? pokemon.types[1].type.name : '';
-  //   }
-  // }
-
-  getData() {
-    const array = [
-      // this.pokemonService.pokemonInfo,
-      // this.pokemonService.pokemonSpeciesInfo,
-      this.pokemonService.typesInfo
-    ];
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < array.length; i++) {
-      const theJSON = JSON.stringify(array[i]);
-      const uri = 'data:application/json;charset=UTF-8,' + encodeURIComponent(theJSON);
-      const a = document.createElement('a');
-      a.href = uri;
-      a.innerHTML = `Right-click and choose save as...`;
-      document.getElementById('selector')?.appendChild(a);
-      document.getElementById('selector')?.appendChild(document.createElement('br'));
+          if (response.length > 0) {
+            this.isPopoverOpen = true;
+          }
+        });
     }
   }
+
+  importPokemonTypeFromPopover(pokemon: Pokemon) {
+    this.popover.dismiss();
+
+    this.fillPokemonTypes(pokemon);
+    this.getPokemonTypeDamages();
+  }
+
+  fillPokemonTypes(pokemon: Pokemon) {
+    if (
+      pokemon.pastTypes.length > 0 &&
+      pokemon.pastTypes[0].generation >= parseInt(this.generation, 10)
+    ) {
+      this.type1 = pokemon.pastTypes[0].types[0] ? pokemon.pastTypes[0].types[0].type.name : '';
+      this.type2 = pokemon.pastTypes[0].types[1] ? pokemon.pastTypes[0].types[1].type.name : '';
+    } else {
+      this.type1 = pokemon.types[0] ? pokemon.types[0].type.name : '';
+      this.type2 = pokemon.types[1] ? pokemon.types[1].type.name : '';
+    }
+  }
+
+  // getData() {
+  //   const array = [
+  //     this.pokemonService.pokemonInfo
+  //     // this.pokemonService.pokemonSpeciesInfo,
+  //     // this.pokemonService.typesInfo
+  //   ];
+  //   // eslint-disable-next-line @typescript-eslint/prefer-for-of
+  //   for (let i = 0; i < array.length; i++) {
+  //     const theJSON = JSON.stringify(array[i]);
+  //     const uri = 'data:application/json;charset=UTF-8,' + encodeURIComponent(theJSON);
+  //     const a = document.createElement('a');
+  //     a.href = uri;
+  //     a.innerHTML = `Right-click and choose save as...`;
+  //     document.getElementById('selector')?.appendChild(a);
+  //     document.getElementById('selector')?.appendChild(document.createElement('br'));
+  //   }
+  // }
 }

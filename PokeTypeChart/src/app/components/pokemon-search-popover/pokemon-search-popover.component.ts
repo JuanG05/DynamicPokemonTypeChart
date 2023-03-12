@@ -13,6 +13,7 @@ export class PokemonSearchPopoverComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
   outputSelectedPokemon(pokemon: Pokemon) {
     this.selectedPokemon.emit(pokemon);
   }

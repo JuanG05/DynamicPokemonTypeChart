@@ -1,3 +1,4 @@
+import {PastType, Pokemon, PokemonType} from '../models/Pokemon';
 import {DamageEntry, PastDamageRelation, Type} from '../models/Type';
 
 export class TypedData {
@@ -5,6 +6,25 @@ export class TypedData {
 
   constructor() {
     //Empty
+  }
+
+  /**
+   * Returns the data as the Pokemon interface
+   *
+   * @param data Data from the PokéAPI 'https://pokeapi.co/api/v2/pokemon/id/'
+   * @returns Data as Pokemon interface
+   */
+  static setPokemonData(data: any): Promise<Pokemon> {
+    return new Promise(async (resolve) => {
+      resolve({
+        id: data?.id,
+        name: await this.fixNameFormat(data?.name),
+        generation: -1,
+        sprite: data?.sprites?.front_default,
+        pastTypes: await this.setPastTypes(data?.past_types),
+        types: this.setPokemonTypes(data?.types)
+      } as Pokemon);
+    });
   }
 
   /**
@@ -47,7 +67,6 @@ export class TypedData {
     for (const info of data) {
       damageEntry.push({
         generation: info?.generation,
-        // * Mantener name en minúscula (para cálculo de daños)
         damageEntry: {name: info?.name, id: this.getIdFromUrl(info?.url)}
       } as DamageEntry);
     }
@@ -67,6 +86,51 @@ export class TypedData {
     } else {
       return -1;
     }
+  }
+
+  /**
+   * Returns the data as the PastType interface
+   *
+   * @param data
+   * @returns PastType array
+   */
+  static async setPastTypes(data: any): Promise<PastType[]> {
+    if (!data) {
+      return [];
+    }
+
+    const pastType: PastType[] = [];
+    for (const info of data) {
+      pastType.push({
+        generation: this.getIdFromUrl(info?.generation?.url),
+        types: this.setPokemonTypes(info?.types)
+      } as PastType);
+    }
+
+    return pastType;
+  }
+
+  /**
+   * Returns the data as the PokemonType interface
+   *
+   * @param data
+   * @returns PokemonType array
+   */
+  static setPokemonTypes(data: any): PokemonType[] {
+    if (!data) {
+      return [];
+    }
+
+    const pokemonType: PokemonType[] = [];
+
+    for (const info of data) {
+      pokemonType.push({
+        slot: info?.slot,
+        type: {name: info?.type?.name, id: this.getIdFromUrl(info?.type?.url)}
+      } as PokemonType);
+    }
+
+    return pokemonType;
   }
 
   /**
@@ -97,6 +161,51 @@ export class TypedData {
     }
 
     return pastDamageRelation;
+  }
+
+  /**
+   * Delete the '-' from the string given
+   *
+   * @param data string
+   * @returns fixed string
+   */
+  static async fixNameFormat(data: string): Promise<string> {
+    if (!data) {
+      return '';
+    }
+
+    const nameArray = data.split('-');
+    let name = '';
+    let i = 0;
+    for (const part of nameArray) {
+      name += part;
+      if (i !== nameArray.length - 1) {
+        name += ' ';
+      }
+      i++;
+    }
+
+    name = await this.capitalize(name);
+    return name;
+  }
+
+  static capitalize(str: string): Promise<string> {
+    if (!str) {
+      return new Promise((resolve) => resolve(''));
+    }
+
+    return new Promise((resolve) => {
+      const array = str.split(' ');
+      let capitalized = '';
+
+      for (const [index, word] of array.entries()) {
+        const lower = word.toLowerCase();
+        capitalized += word.charAt(0).toUpperCase() + lower.slice(1);
+        capitalized += index < array.length - 1 ? ' ' : '';
+      }
+
+      resolve(capitalized);
+    });
   }
 
   static async fixGenerationNameFormat(data: string): Promise<string> {

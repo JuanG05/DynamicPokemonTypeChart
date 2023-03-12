@@ -4,6 +4,8 @@ import {TypedData} from '../helpers/TypedData';
 import {HttpClient} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
 import typesInfoJson from 'src/assets/Data/typesInfo.json';
+import pokemonInfoJson from 'src/assets/Data/pokemonInfo.json';
+import {Pokemon} from '../models/Pokemon';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +15,7 @@ export class PokemonService {
   readonly apiUrl = environment.pokemonAPIV2;
 
   typesInfo: Type[] = [];
+  pokemonInfo: Pokemon[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -24,61 +27,60 @@ export class PokemonService {
   async getAllTypesInfoInArray(): Promise<Type[]> {
     this.typesInfo = typesInfoJson as Type[];
     return this.typesInfo;
-    let typesInfo: Type[] = [];
-
-    // if (typesInfo.length === 0) {
-    //   for (let id = 1; id <= this.typesNumber; id++) {
-    //     await this.getTypesById(id)
-    //       .then(async (data: any) => {
-    //         const type = await TypedData.setTypeData(data);
-
-    //         this.fillDamageRelations(type);
-
-    //         for (const pastDamage of type.pastDamageRelations) {
-    //           this.fillDamageRelations(pastDamage);
-    //         }
-
-    //         typesInfo.push(type);
-    //         typesInfo.sort((a, b) => a.id - b.id);
-    //       })
-    //       .catch((_error) => {});
-    //   }
-    //   this.typesInfo = typesInfo;
-    //   localStorage.setItem('typesInfo', JSON.stringify(typesInfo));
-    // }
-    // return typesInfo;
   }
 
-  // async getTypesById(id: number) {
-  //   return await this.http.get(`${this.apiUrl}/type/${id}`).toPromise();
-  // }
+  async searchPokemon(searchTerm: string, generation: string) {
+    let filtered = this.pokemonInfo.filter(
+      (pokemon) => pokemon.name.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1
+    );
+    filtered = filtered.filter((pokemon) => pokemon.generation <= parseInt(generation, 10));
 
-  // fillDamageRelations(type: Type | PastDamageRelation) {
-  //   this.fillDamageRelationGeneration(type.damageRelations.doubleDamageFrom);
-  //   this.fillDamageRelationGeneration(type.damageRelations.doubleDamageTo);
-  //   this.fillDamageRelationGeneration(type.damageRelations.halfDamageFrom);
-  //   this.fillDamageRelationGeneration(type.damageRelations.halfDamageTo);
-  //   this.fillDamageRelationGeneration(type.damageRelations.noDamageFrom);
-  //   this.fillDamageRelationGeneration(type.damageRelations.noDamageTo);
-  // }
+    return filtered;
+  }
 
-  // fillDamageRelationGeneration(damageEntry: DamageEntry[]) {
-  //   for (const damageRelation of damageEntry) {
-  //     switch (damageRelation.damageEntry.id) {
-  //       case 18:
-  //         damageRelation.generation = 6;
-  //         break;
-  //       case 17:
-  //         damageRelation.generation = 2;
-  //         break;
-  //       case 9:
-  //         damageRelation.generation = 2;
-  //         break;
+  /**
+   * Returns the Pokemon data as an array of Pokemon[]
+   *
+   * @returns Promise<Pokemon[]>
+   */
+  async getPokemonInfoInArray(): Promise<Pokemon[]> {
+    this.pokemonInfo = pokemonInfoJson as Pokemon[];
+    return this.pokemonInfo;
+  }
 
-  //       default:
-  //         damageRelation.generation = 1;
-  //         break;
-  //     }
-  //   }
-  // }
+  async setPokemonGeneration(pokemon: Pokemon): Promise<Pokemon> {
+    await this.getPokemonSpeciesById(pokemon.id).then(async (data: any) => {
+      pokemon.generation = TypedData.getIdFromUrl(data?.generation?.url);
+    });
+    return pokemon;
+  }
+
+  async getAllPokemonVarietiesFromPokemon(pokemon: Pokemon) {
+    const pokemonVarieties: Pokemon[] = [];
+
+    await this.getPokemonSpeciesById(pokemon.id).then(async (data: any) => {
+      if (data?.varieties.length > 1) {
+        for (const variety of data?.varieties) {
+          if (!variety.is_default) {
+            // console.log(TypedData.getIdFromUrl(variety.pokemon.url));
+            await this.getPokemonById(TypedData.getIdFromUrl(variety.pokemon.url)).then(
+              async (data: any) => {
+                let pokemonVariety = await TypedData.setPokemonData(data);
+                pokemonVarieties.push(pokemonVariety);
+              }
+            );
+          }
+        }
+      }
+    });
+
+    return pokemonVarieties;
+  }
+
+  async getPokemonById(id: number) {
+    return await this.http.get(`${this.apiUrl}/pokemon/${id}`).toPromise();
+  }
+  async getPokemonSpeciesById(id: number) {
+    return await this.http.get(`${this.apiUrl}/pokemon-species/${id}`).toPromise();
+  }
 }
