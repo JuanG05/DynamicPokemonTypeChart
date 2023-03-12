@@ -61,11 +61,6 @@
   max-width: 240px;
 }
 
-.version-button {
-  --color: var(--color);
-  --border-color: var(--color);
-}
-
 #searchPopover {
   --height: 70vh;
   --backdrop-opacity: 0.4;
@@ -82,4 +77,9 @@ app-pokemon-search-popover {
 
 ion-title.title-small {
   font-size: 18px;
+}
+
+.title {
+  padding: unset;
+  margin-left: 3%;
 }

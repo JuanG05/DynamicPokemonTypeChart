@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title size="small">Type Chart | {{actualGen}}</ion-title>
+    <ion-title size="small" class="title">Type Chart | {{actualGen}}</ion-title>
     <ion-button class="version-button" slot="primary" fill="clear" (click)="openAboutModal()">
       <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
     </ion-button>
@@ -13,7 +13,6 @@
           <ion-list>
             <ion-button
               expand="block"
-              class="version-button"
               *ngFor="let actualGen of availableGens"
               (click)="updateToNewGeneration(actualGen[0])"
               [fill]="generation === actualGen[0] ? 'outline' : 'clear'"
