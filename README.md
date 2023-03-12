@@ -1,4 +1,9 @@
-# Dynamic Pokémon Type Chart
+# Dynamic Pokémon Type Chart 
+
+<a href="https://juang05.github.io/DynamicPokemonTypeChart/" target="_blank" rel="noopener noreferrer">
+GitHub Page
+  
+</a>
 
 An app made by a fan, for fans.
 
