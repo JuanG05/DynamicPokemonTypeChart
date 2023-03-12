@@ -96,7 +96,7 @@
   --ion-color-broken: #ea9e9e;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) or (prefers-color-scheme: light) {
   /*
    * Dark Colors
    * -------------------------------------------
