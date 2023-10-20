@@ -9,7 +9,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "gh-pages": "ionic build --prod -- --base-href https://juang05.github.io/DynamicPokemonTypeChart/ && npx angular-cli-ghpages --dir=www"
   },
   "private": true,
   "dependencies": {
